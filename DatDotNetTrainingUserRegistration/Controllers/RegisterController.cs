@@ -5,6 +5,8 @@ using BCrypt.Net;
 using Org.BouncyCastle.Crypto.Generators;
 using static DatDotNetTrainingUserRegistration.Dtos.RegisterDto;
 using DatDotNetTrainingUserRegistration.Database.AppDbContextModels;
+using DatDotNetTrainingUserRegistration.Domain.Features.Register;
+using DatDotNetTrainingUserRegistration.Dtos;
 
 namespace DatDotNetTrainingUserRegistration.Controllers
 {
@@ -12,32 +14,22 @@ namespace DatDotNetTrainingUserRegistration.Controllers
     [ApiController]
     public class RegisterController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly RegisterService _registerService;
 
-        public RegisterController()
+        public RegisterController(RegisterService registerService)
         {
-            _context = new AppDbContext();
+            _registerService = registerService;
         }
 
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterRequestDto request)
         {
-            if (_context.TblUsers.Any(u => u.UserName == request.UserName))
-                return BadRequest("Username already exists.");
-
-
-            var newUser = new TblUser
+           var result = await _registerService.Register(request);
+            if (result.IsValidationError)
             {
-                UserId = Guid.NewGuid(),
-                UserName = request.UserName,
-                FullName = request.FullName,
-                Password = request.Password
-            };
-
-            _context.TblUsers.Add(newUser);
-            await _context.SaveChangesAsync();
-
-            return Ok("User registered successfully.");
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
     }
 }

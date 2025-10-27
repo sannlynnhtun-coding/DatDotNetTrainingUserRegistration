@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Features\Login\" />
     <Folder Include="Features\Profile\" />
-    <Folder Include="Features\Register\" />
   </ItemGroup>
 
   <ItemGroup>
