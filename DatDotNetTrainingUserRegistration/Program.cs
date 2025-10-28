@@ -1,5 +1,9 @@
 using DatDotNetTrainingUserRegistration.Database.AppDbContextModels;
+using DatDotNetTrainingUserRegistration.Domain.Features.Login;
+using DatDotNetTrainingUserRegistration.Domain.Features.Product;
+using DatDotNetTrainingUserRegistration.Domain.Features.Profile;
 using DatDotNetTrainingUserRegistration.Domain.Features.Register;
+using DatDotNetTrainingUserRegistration.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +22,10 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 });
 
 builder.Services.AddScoped<RegisterService>();
+builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<UserSessionService>();
+builder.Services.AddScoped<ProductService>();
 
 var app = builder.Build();
 

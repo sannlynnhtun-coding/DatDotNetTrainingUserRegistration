@@ -1,10 +1,5 @@
 ﻿namespace DatDotNetTrainingUserRegistration.Dtos
 {
-    public class RegisterDto
-    {
-        
-    }
-
     public class RegisterRequestDto
     {
         public string UserName { get; set; }

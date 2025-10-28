@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Login\" />
-    <Folder Include="Features\Profile\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DatDotNetTrainingUserRegistration.Database\DatDotNetTrainingUserRegistration.Database.csproj" />
   </ItemGroup>
 

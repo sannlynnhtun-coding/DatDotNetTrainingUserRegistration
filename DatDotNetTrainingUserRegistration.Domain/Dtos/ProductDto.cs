@@ -30,10 +30,11 @@
         public int Quantity { get; set; }
     }
 
-    public class ProductCreateResponseDto
+    public class ProductResponseDto
     {
         public bool IsSuccess { get; set; }
         public string Message { get; set; }
+        public List<ProductDto> Products { get; set; }
     }
 
     public class ProductUpdateRequestDto

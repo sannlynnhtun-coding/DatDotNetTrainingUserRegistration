@@ -1,11 +1,9 @@
 ﻿using DatDotNetTrainingUserRegistration.Database.AppDbContextModels;
+using DatDotNetTrainingUserRegistration.Domain.Features.Login;
+using DatDotNetTrainingUserRegistration.Domain.Features.Profile;
 using DatDotNetTrainingUserRegistration.Domain.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using DatDotNetTrainingUserRegistration.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using static DatDotNetTrainingUserRegistration.Dtos.LoginDto;
-using static DatDotNetTrainingUserRegistration.Dtos.ProfileDto;
 
 namespace DatDotNetTrainingUserRegistration.Controllers
 {
@@ -13,34 +11,18 @@ namespace DatDotNetTrainingUserRegistration.Controllers
     [ApiController]
     public class ProfileController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        private readonly UserSessionService _userSessionService;
-
-        public ProfileController()
+        private readonly ProfileService _profileService;
+        public ProfileController(ProfileService profileService)
         {
-            _context = new AppDbContext();
-            _userSessionService = new UserSessionService();
+            _profileService = profileService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> ProfileData([FromBody] ProfileRequestDto request)
+        public async Task<IActionResult> GetProfile([FromBody] ProfileRequestDto request)
         {
-            if (!_userSessionService.IsSessionValid(request.UserId, request.SessionId))
-                return Unauthorized("Invalid or expired session.");
-
-            var userProfile = await _context.TblUsers
-                .Select(u => new ProfileResponseDto
-                {
-                    UserId = u.UserId,
-                    UserName = u.UserName,
-                    FullName = u.FullName
-                })
-                .FirstOrDefaultAsync(u => u.UserId == request.UserId);
-
-            if (userProfile == null)
-                return NotFound("User profile not found.");
-
-            return Ok(userProfile);
+            var result = await _profileService.GetProfile(request);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
         }
     }
 }

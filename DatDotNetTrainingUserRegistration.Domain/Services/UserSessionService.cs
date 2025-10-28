@@ -8,7 +8,11 @@ public class UserSessionService
 
     public UserSessionService()
     {
-        _db = new AppDbContext();
+    }
+
+    public UserSessionService(AppDbContext db)
+    {
+        _db = db;
     }
 
     public bool IsSessionValid(Guid userId, Guid sessionId)

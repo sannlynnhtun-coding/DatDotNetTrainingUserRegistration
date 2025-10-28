@@ -2,21 +2,12 @@
 using DatDotNetTrainingUserRegistration.Database.AppDbContextModels;
 using DatDotNetTrainingUserRegistration.Dtos;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DatDotNetTrainingUserRegistration.Domain.Features.Register;
 
 public class RegisterService
 {
     private readonly AppDbContext _db;
-
-    // constructor injection
-    // method injection
-    // property injection
     public RegisterService(AppDbContext db)
     {
         _db = db;

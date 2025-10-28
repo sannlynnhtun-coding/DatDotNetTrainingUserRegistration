@@ -1,9 +1,6 @@
-﻿using DatDotNetTrainingUserRegistration.Database.AppDbContextModels;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
+﻿using DatDotNetTrainingUserRegistration.Domain.Features.Login;
+using DatDotNetTrainingUserRegistration.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using static DatDotNetTrainingUserRegistration.Dtos.LoginDto;
 
 namespace DatDotNetTrainingUserRegistration.Controllers
 {
@@ -11,38 +8,18 @@ namespace DatDotNetTrainingUserRegistration.Controllers
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly AppDbContext _context;
-
-        public LoginController()
+        private readonly LoginService _loginService;
+        public LoginController(LoginService loginService)
         {
-            _context = new AppDbContext();
+            _loginService = loginService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+        public async Task<IActionResult> Login(LoginRequestDto request)
         {
-            var user = await _context.TblUsers.FirstOrDefaultAsync(u => u.UserName == request.UserName || u.Password == request.Password);
-            if (user == null)
-                return Unauthorized("Invalid username or password.");
-
-            var newSession = new TblLogin
-            {
-                LoginId = Guid.NewGuid(),
-                UserId = user.UserId,
-                SessionId = Guid.NewGuid(),
-                SessionTime = DateTime.UtcNow.AddMinutes(2)
-            };
-
-            _context.TblLogins.Add(newSession);
-            await _context.SaveChangesAsync();
-
-            var response = new LoginResponseDto
-            {
-                UserId = user.UserId,
-                SessionId = newSession.SessionId,
-            };
-
-            return Ok(response);
+            var result = await _loginService.Login(request);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
         }
     }
 }

@@ -1,8 +1,6 @@
-﻿using DatDotNetTrainingUserRegistration.Database.AppDbContextModels;
-using DatDotNetTrainingUserRegistration.Domain.Services;
+﻿using DatDotNetTrainingUserRegistration.Domain.Features.Product;
 using DatDotNetTrainingUserRegistration.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DatDotNetTrainingUserRegistration.Controllers
 {
@@ -10,110 +8,43 @@ namespace DatDotNetTrainingUserRegistration.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly AppDbContext _db;
-        private readonly UserSessionService _userSessionService;
+        private readonly ProductService _productService;
 
-        public ProductController()
+        public ProductController(ProductService productService)
         {
-            _db = new AppDbContext();
-            _userSessionService = new UserSessionService();
+            _productService = productService;
         }
 
         [HttpGet]
         public IActionResult GetProducts([FromHeader] Guid userId, [FromHeader] Guid sessionId)
         {
-            if (!_userSessionService.IsSessionValid(userId, sessionId))
-                return Unauthorized("Invalid or expired session.");
-
-            var lst = _db.TblProducts
-                .Where(x => x.IsDelete == false)
-                .ToList();
-            return Ok(lst);
+            var result = _productService.GetProducts(userId, sessionId);
+            if (!result.IsSuccess) return Unauthorized(result);
+            return Ok(result);
         }
 
         [HttpPost]
         public IActionResult CreateProduct([FromHeader] Guid userId, [FromHeader] Guid sessionId, [FromBody] ProductCreateRequestDto request)
         {
-            if (!_userSessionService.IsSessionValid(userId, sessionId))
-                return Unauthorized("Invalid or expired session.");
-
-            TblProduct item = new TblProduct
-            {
-                ProductName = request.ProductName,
-                Price = request.Price,
-                Quantity = request.Quantity,
-                CreatedBy = userId.ToString(),
-                CreatedDate = DateTime.Now,
-            };
-
-            _db.TblProducts.Add(item);
-            int result = _db.SaveChanges();
-
-            var model = new ProductCreateResponseDto
-            {
-                IsSuccess = result > 0,
-                Message = result > 0 ? "Product created successfully." : "Failed to create product."
-            };
-
-            return Ok(model);
+            var result = _productService.CreateProduct(userId, sessionId, request);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
         }
 
         [HttpPatch("{id}")]
         public IActionResult UpdateProduct(int id, [FromHeader] Guid userId, [FromHeader] Guid sessionId, [FromBody] ProductUpdateRequestDto request)
         {
-            if (!_userSessionService.IsSessionValid(userId, sessionId))
-                return Unauthorized("Invalid or expired session.");
-
-            var product = _db.TblProducts.FirstOrDefault(x => x.ProductId == id);
-            if (product is null)
-                return NotFound();
-
-            if (!string.IsNullOrEmpty(request.ProductName))
-                product.ProductName = request.ProductName;
-
-            if (request.Price > 0)
-                product.Price = request.Price ?? 0;
-
-            if (request.Quantity > 0)
-                product.Quantity = request.Quantity ?? 0;
-
-            product.ModifiedBy = userId.ToString();
-            product.ModifiedDate = DateTime.Now;
-
-            int result = _db.SaveChanges();
-
-            var model = new ProductCreateResponseDto
-            {
-                IsSuccess = result > 0,
-                Message = result > 0 ? "Product updated successfully." : "Failed to update product."
-            };
-
-            return Ok(model);
+            var result = _productService.UpdateProduct(id, userId, sessionId, request);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteProduct(int id, [FromHeader] Guid userId, [FromHeader] Guid sessionId)
         {
-            if (!_userSessionService.IsSessionValid(userId, sessionId))
-                return Unauthorized("Invalid or expired session.");
-
-            var product = _db.TblProducts.FirstOrDefault(x => x.ProductId == id);
-            if (product is null)
-                return NotFound();
-
-            product.IsDelete = true;
-            product.ModifiedBy = userId.ToString();
-            product.ModifiedDate = DateTime.Now;
-
-            int result = _db.SaveChanges();
-
-            var model = new ProductCreateResponseDto
-            {
-                IsSuccess = result > 0,
-                Message = result > 0 ? "Product deleted successfully." : "Failed to delete product."
-            };
-
-            return Ok(model);
+            var result = _productService.DeleteProduct(id, userId, sessionId);
+            if (!result.IsSuccess) return BadRequest(result);
+            return Ok(result);
         }
     }
 }

@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
-using BCrypt.Net;
-using Org.BouncyCastle.Crypto.Generators;
-using static DatDotNetTrainingUserRegistration.Dtos.RegisterDto;
-using DatDotNetTrainingUserRegistration.Database.AppDbContextModels;
+﻿using Microsoft.AspNetCore.Mvc;
 using DatDotNetTrainingUserRegistration.Domain.Features.Register;
 using DatDotNetTrainingUserRegistration.Dtos;
 
