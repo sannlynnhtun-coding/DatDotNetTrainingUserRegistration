@@ -1,0 +1,18 @@
+﻿@if (TempData["Message"] != null)
+{
+	<div class="alert alert-danger" role="alert">
+		@TempData["Message"]
+	</div>
+}
+
+<form method="post" action="/login/index">
+	<div class="mb-3">
+		<label for="UserName" class="form-label">User Name</label>
+		<input type="text" class="form-control" id="UserName" name="UserName" placeholder="name@example.com">
+	</div>
+	<div class="mb-3">
+		<label for="Password" class="form-label">Password</label>
+		<input type="password" class="form-control" id="Password" name="Password" placeholder="Enter your password">
+	</div>
+	<button type="submit" class="btn btn-primary">Login</button>
+</form>

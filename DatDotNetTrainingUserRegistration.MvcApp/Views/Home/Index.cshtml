@@ -1,0 +1,20 @@
+﻿@using DatDotNetTrainingUserRegistration.Dtos
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    // Layout = "_Layout";
+    string userId = "Guest";
+    string loginData = HttpContextAccessor.HttpContext.Session.GetString("Login");
+    if(loginData != null)
+    {
+        LoginResponseDto login = JsonConvert.DeserializeObject<LoginResponseDto>(loginData);
+        userId = login.UserId.ToString();
+    }
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome, @userId</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
