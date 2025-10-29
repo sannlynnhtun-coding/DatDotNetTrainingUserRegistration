@@ -1,0 +1,17 @@
+﻿@using DatDotNetTrainingUserRegistration.MvcApp2.Services
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Home Page";
+    // string userId = HttpContextAccessor.HttpContext.User.Claims
+    // .FirstOrDefault(x => x.Type == "UserId")?.Value;
+
+    string userId = HttpContextAccessor.GetClaim("UserId");
+    string sessionId = HttpContextAccessor.GetClaim("SessionId");
+}
+
+<div class="text-center">
+    <h5 class="display-4">Welcome</h5>
+    <p>User Id: @userId</p>
+    <p>Session Id: @sessionId</p>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
